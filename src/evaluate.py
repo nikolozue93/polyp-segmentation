@@ -6,16 +6,22 @@ from src.dataset import PolypDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-drive_root = Path("/content/drive/MyDrive/polyp-segmentation")
-checkpoint_path = drive_root / "checkpoints/bce_dice_best.pt"
-results_dir = drive_root / "results"
-results_dir.mkdir(parents=True, exist_ok=True)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+DATA_ROOT = PROJECT_ROOT / "data" / "Kvasir-SEG"
+IMAGE_DIR = DATA_ROOT / "images"
+
+CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+RESULTS_DIR = PROJECT_ROOT / "results"
+
+CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # loading the untouched test split
-with open("configs/splits.json") as f:
+with open(PROJECT_ROOT / "configs" / "splits.json") as f:
     splits = json.load(f)
 
-test_paths = [Path("data/Kvasir-SEG/images") / name for name in splits["test"]]
+test_paths = [IMAGE_DIR / name for name in splits["test"]]
 
 test_loader = DataLoader(
     PolypDataset(test_paths),
@@ -34,7 +40,7 @@ model = smp.Unet(
 
 # restoring learned weights
 checkpoint = torch.load(
-    checkpoint_path,
+    CHECKPOINT_DIR / "bce_dice_best.pt",
     map_location=device,
     weights_only=True,
 )
@@ -95,7 +101,7 @@ print(f"Test Dice: {mean_dice:.4f}")
 print(f"Test IoU:  {mean_iou:.4f}")
 
 # saving per-image metrics
-with open(results_dir / "test_metrics.csv", "w") as f:
+with open(RESULTS_DIR / "test_metrics.csv", "w") as f:
     writer = csv.DictWriter(
         f, fieldnames=["image", "dice", "iou"]
     )

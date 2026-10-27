@@ -72,19 +72,22 @@ if __name__ == "__main__":
 
     device = torch.device("cuda")
 
-    DRIVE_ROOT = Path("/content/drive/MyDrive/polyp-segmentation")
-    CHECKPOINT = DRIVE_ROOT / "checkpoints/bce_dice_best.pt"
-    RESULTS = DRIVE_ROOT / "results"
-    RESULTS.mkdir(parents=True, exist_ok=True)
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+    DATA_ROOT = PROJECT_ROOT / "data" / "Kvasir-SEG"
+    IMAGE_DIR = DATA_ROOT / "images"
+
+    CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+    RESULTS_DIR = PROJECT_ROOT / "results"
+
+    CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     # 1. Load validation images, not test images.
-    with open("configs/splits.json") as f:
+    with open(PROJECT_ROOT / "configs" / "splits.json") as f:
         splits = json.load(f)
 
-    val_paths = [
-        Path("data/Kvasir-SEG/images") / name
-        for name in splits["val"]
-    ]
+    val_paths = [IMAGE_DIR / name for name in splits["val"]]
 
     val_loader = DataLoader(
         PolypDataset(val_paths),
@@ -102,7 +105,7 @@ if __name__ == "__main__":
     ).to(device)
 
     checkpoint = torch.load(
-        CHECKPOINT,
+        CHECKPOINT_DIR / "bce_dice_best.pt",
         map_location=device,
         weights_only=True,
     )
@@ -151,7 +154,7 @@ if __name__ == "__main__":
         {"mode": "AMP_FP16", **amp_results},
     ]
 
-    output_path = RESULTS / "optimization.csv"
+    output_path = RESULTS_DIR / "optimization.csv"
 
     with open(output_path, "w", newline="") as f:
         writer = csv.DictWriter(

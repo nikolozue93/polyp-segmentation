@@ -3,9 +3,13 @@ from pathlib import Path
 import random
 import json
 
-ROOT = Path("data/Kvasir-SEG")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+ROOT = PROJECT_ROOT / "data" / "Kvasir-SEG"
 IMAGE_DIR = ROOT / "images"
 MASK_DIR = ROOT / "masks"
+
+SPLITS_PATH = PROJECT_ROOT / "configs" / "splits.json"
 
 image_names = {p.name for p in IMAGE_DIR.glob("*.jpg")}
 mask_names = {p.name for p in MASK_DIR.glob("*.jpg")}
@@ -32,9 +36,9 @@ assert not (set(splits["train"]) & set(splits["val"]))
 assert not (set(splits["train"]) & set(splits["test"]))
 assert not (set(splits["val"]) & set(splits["test"]))
 
-Path("configs").mkdir(exist_ok=True)
+SPLITS_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-with open("configs/splits.json", "w") as f:
+with open(SPLITS_PATH, "w") as f:
     json.dump(splits, f, indent=2)
 
 for name, files in splits.items():

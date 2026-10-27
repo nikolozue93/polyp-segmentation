@@ -7,11 +7,13 @@ from src.dataset import PolypDataset
 from src.losses import BCEDiceLoss
 
 
-ROOT = Path("data/Kvasir-SEG/images")
-DRIVE_ROOT = Path("/content/drive/MyDrive/polyp-segmentation")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-CHECKPOINT_DIR = DRIVE_ROOT / "checkpoints"
-RESULTS_DIR = DRIVE_ROOT / "results"
+DATA_ROOT = PROJECT_ROOT / "data" / "Kvasir-SEG"
+IMAGE_DIR = DATA_ROOT / "images"
+
+CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints"
+RESULTS_DIR = PROJECT_ROOT / "results"
 
 CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -31,11 +33,11 @@ print("Training device:", device)
 
 
 # load reproducible splits
-with open("configs/splits.json") as f:
+with open(PROJECT_ROOT / "configs" / "splits.json") as f:
     splits = json.load(f)
 
-train_paths = [ROOT / name for name in splits["train"]]
-val_paths = [ROOT / name for name in splits["val"]]
+train_paths = [IMAGE_DIR / name for name in splits["train"]]
+val_paths = [IMAGE_DIR / name for name in splits["val"]]
 
 train_loader = DataLoader(
     PolypDataset(train_paths),

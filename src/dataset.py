@@ -4,11 +4,14 @@ import torch
 from torch.utils.data import Dataset
 from PIL import Image
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DATA_ROOT = PROJECT_ROOT / "data" / "Kvasir-SEG"
+
 
 class PolypDataset(Dataset):
     def __init__(self, image_paths, image_size=256):
-        self.image_paths = list(image_paths)
-        self.mask_dir = Path("data/Kvasir-SEG/masks")
+        self.image_paths = [Path(p) for p in image_paths]
+        self.mask_dir = DATA_ROOT / "masks"
         self.image_size = image_size
 
         assert self.image_paths, "Dataset contains no images"
