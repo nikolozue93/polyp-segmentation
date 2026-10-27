@@ -138,6 +138,8 @@ Soft Dice is calculated using continuous sigmoid probabilities so that gradients
 | Validation IoU at selected checkpoint | 0.7637 | **0.7675** |
 | Epochs | 5 | 5 |
 
+![Validation Dice Comparison](assets/validation_dice_comparison.png)
+
 The combined-loss experiment achieved a slightly higher validation Dice and IoU and was selected for final evaluation.
 
 The improvement was modest, approximately 0.26 percentage points in Dice. These results come from one seeded training run per configuration and do not establish that one loss formulation is universally superior.
@@ -192,6 +194,8 @@ The benchmark measured GPU model-forward latency using CUDA events, with GPU war
 | Validation Dice | 0.85214 | 0.85216 |
 | Validation IoU | 0.76751 | 0.76753 |
 
+![FP32 vs Mixed Precision](assets/inference_latency_comparison.png)
+
 Mixed precision achieved a **1.44× median inference speedup**, corresponding to approximately a **30.6% reduction in median latency**.
 
 The observed accuracy differences were negligible. The benchmark does not demonstrate improved segmentation accuracy from mixed precision.
@@ -206,7 +210,7 @@ The measurements are stored in `results/optimization.csv`.
     ├── app.py
     ├── README.md
     ├── requirements.txt
-    ├── AI_USAGE.md
+    ├── AI-USAGE.md
     ├── configs/
     │   └── splits.json
     ├── src/
@@ -247,41 +251,28 @@ The following directories are used locally and are excluded from Git:
 ## Installation
 
 Python 3.11 or 3.12 is recommended with compatible PyTorch dependencies.
+```
+# Clone the repository
+git clone https://github.com/nikolozue93/polyp-segmentation.git
+cd polyp-segmentation
 
-Clone the repository and create a virtual environment:
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
 
-    git clone https://github.com/nikolozue93/polyp-segmentation.git
-    cd polyp-segmentation
+# Install dependencies
+python -m pip install -r requirements.txt
 
-    python -m venv .venv
-    source .venv/bin/activate
+# Download trained model weights
+mkdir -p weights
 
-    python -m pip install -r requirements.txt
+curl -fL \
+  https://github.com/nikolozue93/polyp-segmentation/releases/download/v1.0.0/model.pt \
+  -o weights/model.pt
 
-For Windows, activate the virtual environment using the appropriate activation script.
-
-A CUDA GPU is recommended for training but is not required for running the Gradio inference application.
-
-## Download pretrained model
-
-The trained inference weights are distributed separately from the Git source code.
-
-**[Download model weights — v1.0.0](../../releases/tag/v1.0.0)**
-
-Download the release asset named `model.pt` and place it in:
-
-    weights/model.pt
-
-The application expects the weights at this location.
-
-The release contains the selected BCE + Dice model's parameters, without the optimizer state.
-
-## Run the application
-
-From the repository root, after installing dependencies and downloading the weights:
-
-    python app.py
-
+# Launch the application
+python app.py
+```
 Open the local address printed by Gradio, typically:
 
 `http://127.0.0.1:7860`
@@ -357,7 +348,7 @@ Parts of the training, evaluation, and benchmarking code were AI-assisted or AI-
 
 The reported model metrics and timing results were obtained from actual experiments.
 
-See `AI_USAGE.md` for a more detailed disclosure.
+See [AI Usage Disclosure](AI-USAGE.md) for a more detailed disclosure.
 
 ## Dataset attribution and usage terms
 
