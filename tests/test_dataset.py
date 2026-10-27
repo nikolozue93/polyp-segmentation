@@ -1,7 +1,7 @@
 from pathlib import Path
 import torch
 from torch.utils.data import DataLoader
-from dataset import PolypDataset
+from src.dataset import PolypDataset
 
 image_paths = sorted(Path("data/Kvasir-SEG/images").glob("*.jpg"))
 
