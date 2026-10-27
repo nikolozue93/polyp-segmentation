@@ -28,6 +28,10 @@ The model was trained on the **Kvasir-SEG** dataset and predicts pixel-level seg
 
 The selected model uses a combined Binary Cross-Entropy and soft Dice loss.
 
+**For detailed methodology, experiments, limitations,
+and engineering decisions, see the
+[Technical Report](reports/technical_report.md).**
+
 ## Demo
 
 ![Gradio Application](assets/gradio_example.png)
